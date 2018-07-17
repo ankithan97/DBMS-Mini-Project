@@ -1,0 +1,40 @@
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE UpdateOnInsert(IN cid int)  BEGIN update CAPACITY set Current=Current+1 where Course_ID=cid; END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> call UpdateOnInsert(101);
+Query OK, 1 row affected (0.06 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE UpdateOnDelete(IN cid int)  BEGIN update CAPACITY set Current=Current-1 where Course_ID=cid; END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> call UpdateOnDelete(101);
+Query OK, 1 row affected (0.26 sec)
+
+
+
+mysql> create trigger OnInsert before insert on COURSES_OPTED for each row call UpdateOnInsert(NEW.Course_ID);
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> insert into COURSES_OPTED values(3,101);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> delete from COURSES_OPTED where Stud_ID=3;
+Query OK, 1 row affected (0.06 sec)
+
+
+
+mysql> create trigger OnDelete after delete on COURSES_OPTED for each row call UpdateOnDelete(OLD.Course_ID);
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> insert into COURSES_OPTED values(3,101);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> delete from COURSES_OPTED where Stud_ID=3;
+Query OK, 1 row affected (0.04 sec)
+
+
+
